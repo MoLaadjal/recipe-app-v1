@@ -104,4 +104,22 @@ export class RecipeService {
   getRecipeById(id: number) {
     return this.recipes.find(recipe => recipe.id === id)
   }
+
+  saveRecipe(recipe: Recipe): void {
+    const existingRecipeIndex = this.recipes.findIndex(r => r.id === recipe.id);
+
+    if (existingRecipeIndex > -1) {
+      // Mise à jour de la recette existante
+      this.recipes[existingRecipeIndex] = recipe;
+    } else {
+      // Ajout d'une nouvelle recette
+      recipe.id = this.generateUniqueId(); // Génère un nouvel ID unique
+      this.recipes.push(recipe);
+    }
+  }
+
+  private generateUniqueId(): number {
+    return this.recipes.length > 0 ? Math.max(...this.recipes.map(r => r.id)) + 1 : 1;
+  }
+
 }

@@ -1,0 +1,25 @@
+<h2>Détails de la recette</h2>
+
+<div>
+  <strong>Nom :</strong> {{ recipe?.name }}
+</div>
+
+<div>
+  <strong>Temps de préparation :</strong> {{ recipe?.prepTime }} minutes
+</div>
+
+<div>
+  <strong>Ingrédients :</strong>
+  <ul>
+    @for (ingredient of recipe?.ingredients; track ingredient) {
+      <li>{{ ingredient }}</li>
+    }
+  </ul>
+</div>
+
+<div>
+  <strong>Instructions :</strong>
+  <p>{{ recipe?.instructions }}</p>
+</div>
+
+
