@@ -7,7 +7,8 @@ export const routes: Routes = [
   { path: '', redirectTo: '/recipes', pathMatch: 'full' },
   { path: 'recipes', component: RecipeListComponent },
   { path: 'recipes/:id', component: RecipeDetailComponent }, //
-  { path: 'new-recipe', component: RecipeFormComponent }, //
+  { path: 'new-recipe', component: RecipeFormComponent },
+  { path: 'edit-recipe/:id', component: RecipeFormComponent }, //
 ];
 
 
