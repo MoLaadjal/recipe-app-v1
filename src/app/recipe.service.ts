@@ -118,6 +118,9 @@ export class RecipeService {
     }
   }
 
+  deleteRecipe(id: number): void {
+    this.recipes = this.recipes.filter(recipe => recipe.id !== id);
+  }
   private generateUniqueId(): number {
     return this.recipes.length > 0 ? Math.max(...this.recipes.map(r => r.id)) + 1 : 1;
   }

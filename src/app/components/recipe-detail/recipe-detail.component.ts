@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RecipeService } from '../../recipe.service';
 import { Recipe } from '../../models/recipe.model';
 
@@ -13,11 +13,21 @@ export class RecipeDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private recipeService: RecipeService
+    private recipeService: RecipeService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.recipe = this.recipeService.getRecipeById(id);
+  }
+
+  confirmDelete(): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette recette ?')) {
+      if (this.recipe) {
+        this.recipeService.deleteRecipe(this.recipe.id);
+        this.router.navigate(['/']);  // Rediriger vers la liste des recettes après suppression
+      }
+    }
   }
 }
