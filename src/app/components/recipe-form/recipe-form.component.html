@@ -1,2 +1,54 @@
-<p>recipe-form works!</p>
+<h2>Ajouter une nouvelle recette</h2>
+<form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="name">Nom de la recette</label>
+    <input id="name" formControlName="name" type="text">
+    @if (recipeForm.get('name')?.invalid && recipeForm.get('name')?.touched) {
+      @if (recipeForm.get('name')?.errors?.['required']) {
+        <small>Le nom est requis.</small>
+      }
+      @if (recipeForm.get('name')?.errors?.['minlength']) {
+        <small>Le nom doit comporter au moins 3 caractères.</small>
+      }
+    }
+  </div>
 
+  <div formArrayName="ingredients">
+    <label>Ingrédients</label>
+    @for (ingredient of ingredients.controls; track ingredient) {
+      <div>
+        <input [formControlName]="ingredients.controls.indexOf(ingredient)" type="text">
+        <button type="button" (click)="removeIngredient(ingredients.controls.indexOf(ingredient))">Retirer</button>
+      </div>
+    }
+    <button type="button" (click)="addIngredient()">Ajouter un ingrédient</button>
+  </div>
+
+  <div>
+    <label for="instructions">Instructions</label>
+    <textarea id="instructions" formControlName="instructions"></textarea>
+    @if (recipeForm.get('instructions')?.invalid && recipeForm.get('instructions')?.touched) {
+      @if (recipeForm.get('instructions')?.errors?.['required']) {
+        <small>Les instructions sont requises.</small>
+      }
+      @if (recipeForm.get('instructions')?.errors?.['minlength']) {
+        <small>Les instructions doivent comporter au moins 10 caractères.</small>
+      }
+    }
+  </div>
+
+  <div>
+    <label for="prepTime">Temps de préparation (en minutes)</label>
+    <input id="prepTime" formControlName="prepTime" type="number">
+    @if (recipeForm.get('prepTime')?.invalid && recipeForm.get('prepTime')?.touched) {
+      @if (recipeForm.get('prepTime')?.errors?.['required']) {
+        <small>Le temps de préparation est requis.</small>
+      }
+      @if (recipeForm.get('prepTime')?.errors?.['min']) {
+        <small>Le temps de préparation doit être supérieur à 0.</small>
+      }
+    }
+  </div>
+
+  <button type="submit" [disabled]="recipeForm.invalid">Ajouter la recette</button>
+</form>
