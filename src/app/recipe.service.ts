@@ -97,6 +97,10 @@ export class RecipeService {
     }
   ];
 
+  constructor() {
+    this.loadRecipesFromLocalStorage();
+  }
+
   getRecipes() {
     return this.recipes
   }
@@ -116,13 +120,28 @@ export class RecipeService {
       recipe.id = this.generateUniqueId(); // Génère un nouvel ID unique
       this.recipes.push(recipe);
     }
+
+    this.saveRecipesToLocalStorage();
   }
 
   deleteRecipe(id: number): void {
     this.recipes = this.recipes.filter(recipe => recipe.id !== id);
+    this.saveRecipesToLocalStorage();
   }
   private generateUniqueId(): number {
     return this.recipes.length > 0 ? Math.max(...this.recipes.map(r => r.id)) + 1 : 1;
   }
 
+  private saveRecipesToLocalStorage(): void {
+    localStorage.setItem('recipes', JSON.stringify(this.recipes));
+  }
+
+  private loadRecipesFromLocalStorage(): void {
+    const recipesData = localStorage.getItem('recipes');
+    if (recipesData) {
+      this.recipes = JSON.parse(recipesData);
+    }
+  }
 }
+
+

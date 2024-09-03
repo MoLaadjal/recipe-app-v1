@@ -18,6 +18,10 @@ export class RecipeDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadRecipe();
+  }
+
+  private loadRecipe(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.recipe = this.recipeService.getRecipeById(id);
   }

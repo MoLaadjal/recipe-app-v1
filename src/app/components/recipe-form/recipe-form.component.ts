@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';  // Importer ActivatedRoute et Router
+import { ActivatedRoute, Router } from '@angular/router';
 import { RecipeService } from '../../recipe.service';
 import { Recipe } from '../../models/recipe.model';
 
@@ -13,17 +13,17 @@ import { Recipe } from '../../models/recipe.model';
 })
 export class RecipeFormComponent implements OnInit {
   recipeForm: FormGroup;
-  editingRecipeId: number | null = null;  // Pour stocker l'ID de la recette en cours d'édition
+  editingRecipeId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private recipeService: RecipeService,
-    private route: ActivatedRoute,  // Injecter ActivatedRoute pour obtenir l'ID de l'URL
-    private router: Router  // Injecter Router pour la redirection après soumission
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.recipeForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
-      ingredients: this.fb.array([]),  // Initialiser avec un tableau vide
+      ingredients: this.fb.array([]),
       instructions: ['', [Validators.required, Validators.minLength(10)]],
       prepTime: ['', [Validators.required, Validators.min(1)]]
     });
@@ -31,14 +31,7 @@ export class RecipeFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.editingRecipeId = Number(this.route.snapshot.paramMap.get('id'));
-    if (this.editingRecipeId) {
-      const recipe = this.recipeService.getRecipeById(this.editingRecipeId);
-      if (recipe) {
-        this.loadRecipeIntoForm(recipe);
-      }
-    } else {
-      this.addIngredient();  // Ajouter un champ d'ingrédient par défaut si c'est une nouvelle recette
-    }
+    this.loadForm();
   }
 
   get ingredients(): FormArray {
@@ -53,26 +46,31 @@ export class RecipeFormComponent implements OnInit {
     this.ingredients.removeAt(index);
   }
 
-  loadRecipeIntoForm(recipe: Recipe): void {
-    this.recipeForm.patchValue({
-      name: recipe.name,
-      instructions: recipe.instructions,
-      prepTime: recipe.prepTime
-    });
-    recipe.ingredients.forEach(ingredient => {
-      this.ingredients.push(this.fb.control(ingredient, Validators.required));
-    });
+  private loadForm(): void {
+    if (this.editingRecipeId) {
+      const recipe = this.recipeService.getRecipeById(this.editingRecipeId);
+      if (recipe) {
+        this.recipeForm.patchValue({
+          name: recipe.name,
+          instructions: recipe.instructions,
+          prepTime: recipe.prepTime
+        });
+        recipe.ingredients.forEach(ingredient => {
+          this.ingredients.push(this.fb.control(ingredient, Validators.required));
+        });
+      }
+    } else {
+      this.addIngredient();  // Ajouter un champ d'ingrédient par défaut
+    }
   }
 
   onSubmit(): void {
     if (this.recipeForm.valid) {
-      const updatedRecipe = this.recipeForm.value;
+      const recipeData = this.recipeForm.value;
       if (this.editingRecipeId) {
-        updatedRecipe.id = this.editingRecipeId;
-        this.recipeService.saveRecipe(updatedRecipe);
-      } else {
-        this.recipeService.saveRecipe(updatedRecipe);
+        recipeData.id = this.editingRecipeId;
       }
+      this.recipeService.saveRecipe(recipeData);
       this.router.navigate(['/']);  // Rediriger vers la liste des recettes après soumission
     }
   }
